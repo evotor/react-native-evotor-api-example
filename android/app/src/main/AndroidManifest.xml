@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.revotor"
+    android:versionCode="1"
+    android:versionName="1.0">
+
+    <uses-sdk
+        android:minSdkVersion="22"
+        android:targetSdkVersion="22" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="ru.evotor.permission.receipt.print.INTERNET_RECEIPT" />
+    <uses-permission android:name="ru.evotor.devices.SCANNER_RECEIVER"/>
+    <uses-permission android:name="ru.evotor.permission.PRINT_Z_REPORT" />
+    <uses-permission android:name="ru.evotor.permission.PAYMENT_SYSTEM" />
+    <uses-permission android:name="ru.evotor.permission.receipt.printExtra.SET" />
+
+    <application
+        android:name=".MainApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+        <meta-data
+            android:name="app_uuid"
+            android:value="6daf41fa-2aa5-4be9-8ee9-486f111eea6e" />
+
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustResize">
+            <meta-data
+                android:name="ru.evotor.launcher.BACKGROUND_COLOR"
+                android:value="#133788" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.EVOTOR" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+        <activity android:name=".NativeActivity">
+        </activity>
+        <service
+            android:name="com.evotor.services.integration.events.PositionsEditService"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="evo.v2.receipt.sell.beforePositionsEdited" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.evotor.services.integration.events.ReceiptDiscountService"
+            android:enabled="true">
+            <meta-data
+                android:name="ru.evotor.sales_screen.BACKGROUND_COLOR"
+                android:value="#133788" />
+
+            <intent-filter android:priority="20">
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="evo.v2.receipt.sell.receiptDiscount" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.evotor.services.integration.events.PaymentSelectService"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="evo.v2.receipt.sell.payment.SELECTED" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.evotor.services.integration.events.PrintGroupService"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="evo.v2.receipt.sell.printGroup.REQUIRED" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.evotor.services.integration.events.PrintExtraService"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="evo.v2.receipt.sell.printExtra.REQUIRED" />
+                <action android:name="evo.v2.receipt.payback.printExtra.REQUIRED" />
+                <action android:name="evo.v2.receipt.buy.printExtra.REQUIRED" />
+                <action android:name="evo.v2.receipt.buyback.printExtra.REQUIRED" />
+            </intent-filter>
+        </service>
+        <receiver
+            android:name="com.evotor.services.broadcast.ReactBarcodeReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="ru.evotor.devices.ScannedCode" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.evotor.services.broadcast.ReactBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="evotor.intent.action.receipt.payback.POSITION_ADDED" />
+                <action android:name="evotor.intent.action.receipt.payback.POSITION_EDITED" />
+                <action android:name="evotor.intent.action.receipt.payback.POSITION_REMOVED" />
+                <action android:name="evotor.intent.action.receipt.sell.POSITION_ADDED" />
+                <action android:name="evotor.intent.action.receipt.sell.POSITION_EDITED" />
+                <action android:name="evotor.intent.action.receipt.sell.POSITION_REMOVED" />
+                <action android:name="evotor.intent.action.cashDrawer.OPEN" />
+                <action android:name="evotor.intent.action.cashOperation.IN" />
+                <action android:name="evotor.intent.action.cashOperation.CASH_OUT" />
+                <action android:name="evotor.intent.action.inventory.CARD_OPEN" />
+                <action android:name="evotor.intent.action.receipt.sell.CLEARED" />
+                <action android:name="evotor.intent.action.receipt.payback.CLEARED" />
+                <action android:name="evotor.intent.action.receipt.sell.RECEIPT_CLOSED" />
+                <action android:name="evotor.intent.action.receipt.payback.RECEIPT_CLOSED" />
+                <action android:name="evotor.intent.action.receipt.sell.OPENED" />
+                <action android:name="evotor.intent.action.receipt.payback.OPENED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

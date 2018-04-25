@@ -1,0 +1,6 @@
+rootProject.name = 'REvotor'
+
+include ':evotor-integration-library'
+project(':evotor-integration-library').projectDir = new File(rootProject.projectDir, '../node_modules/evotor-integration-library/android')
+
+include ':app'

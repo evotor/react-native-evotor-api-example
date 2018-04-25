@@ -1,0 +1,17 @@
+/ios/
+# Watchman
+.watchmanconfig
+.flowconfig
+# Android
+.idea
+.gradle
+local.properties
+*.iml
+/android/build
+/android/app/build
+# Node
+node_modules
+*.log
+.nvm
+yarn.lock
+package-lock.json

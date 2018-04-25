@@ -1,0 +1,1 @@
+Приложение, демонстрирующее все возможности [интеграционной библиотеки Эвотора](https://github.com/evotor/react-native-integration-library)
