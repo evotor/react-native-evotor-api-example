@@ -18,14 +18,16 @@ import {
     PrintableText,
     PrintableBarcode,
     PrintableImage,
-    BarcodeType,PrintExtraPlacePositionAllSubpositionsFooter
+    BarcodeType,
+    PrintExtraPlacePositionAllSubpositionsFooter
 } from 'evotor-integration-library';
 import {AsyncStorage} from "react-native";
 
 const errorHandler = (event) => (error) => console.log("Error handling event " + event + ": " + error.message);
 
 const processIntegration = async (event, callback, getResult) => {
-    if (await AsyncStorage.getItem(event)) {
+    const processCount = parseInt(await AsyncStorage.getItem(event));
+    if (processCount > 2) {
         callback
             .skip()
             .catch(errorHandler(event));
@@ -34,7 +36,7 @@ const processIntegration = async (event, callback, getResult) => {
             .onResult(getResult())
             .catch(errorHandler(event));
         AsyncStorage
-            .setItem(event, event)
+            .setItem(event, (processCount + 1).toString())
             .catch(errorHandler(event));
     }
 };
@@ -148,11 +150,11 @@ const printExtraRequiredListener = (callback) => {
 };
 
 export const addIntegrationServiceListeners = () => {
-    AsyncStorage.removeItem("BEFORE_POSITIONS_EDITED").catch(errorHandler("BEFORE_POSITIONS_EDITED"));
-    AsyncStorage.removeItem("RECEIPT_DISCOUNT").catch(errorHandler("RECEIPT_DISCOUNT"));
-    AsyncStorage.removeItem("PAYMENT_SELECTED").catch(errorHandler("PAYMENT_SELECTED"));
-    AsyncStorage.removeItem("PRINT_GROUP_REQUIRED").catch(errorHandler("PRINT_GROUP_REQUIRED"));
-    AsyncStorage.removeItem("PRINT_EXTRA_REQUIRED").catch(errorHandler("PRINT_EXTRA_REQUIRED"));
+    AsyncStorage.setItem("BEFORE_POSITIONS_EDITED", "0").catch(errorHandler("BEFORE_POSITIONS_EDITED"));
+    AsyncStorage.setItem("RECEIPT_DISCOUNT", "0").catch(errorHandler("RECEIPT_DISCOUNT"));
+    AsyncStorage.setItem("PAYMENT_SELECTED", "0").catch(errorHandler("PAYMENT_SELECTED"));
+    AsyncStorage.setItem("PRINT_GROUP_REQUIRED", "0").catch(errorHandler("PRINT_GROUP_REQUIRED"));
+    AsyncStorage.setItem("PRINT_EXTRA_REQUIRED", "0").catch(errorHandler("PRINT_EXTRA_REQUIRED"));
     ServiceAPI.addEventListener(IntegrationServiceEventType.BEFORE_POSITIONS_EDITED, beforePositionsEditedListener);
     ServiceAPI.addEventListener(IntegrationServiceEventType.RECEIPT_DISCOUNT, receiptDiscountListener);
     ServiceAPI.addEventListener(IntegrationServiceEventType.PAYMENT_SELECTED, paymentSelectedListener);
