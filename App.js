@@ -1,7 +1,7 @@
 import React from 'react';
 import {StackNavigator} from 'react-navigation';
-import Options from "./components/Options";
 import Home from "./components/Home";
+import Options from "./components/Options";
 import Sale from "./components/Sale";
 
 const AppContent = StackNavigator(

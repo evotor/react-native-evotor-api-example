@@ -28,7 +28,7 @@ export default class Options extends React.Component {
         if (state.params.options) {
             const options = [];
             state.params.options.forEach(
-                (item, i) => {
+                (item, i) =>
                     options.push(
                         <RowItem
                             key={i}
@@ -38,7 +38,6 @@ export default class Options extends React.Component {
                             textColor={item.title === "Очистить список событий" ? 'red' : null}
                             text={item.title}/>
                     )
-                }
             );
             return <OptionsContainer options={options}/>
         }

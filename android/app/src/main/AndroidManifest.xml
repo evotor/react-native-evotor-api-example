@@ -136,6 +136,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
+        <receiver
+                android:name="com.evotor.services.broadcast.ReactPushNotificationReceiver"
+                android:enabled="true"
+                android:exported="false">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

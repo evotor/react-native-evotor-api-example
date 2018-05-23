@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, ToastAndroid} from 'react-native';
-import {ReceiptAPI, Scanner, ScannerEventType} from 'evotor-integration-library';
+import {ReceiptAPI, Scanner, ScannerEventType, UuidGenerator} from 'evotor-integration-library';
 import styles from '../res/styles';
 import {receiptOptions} from "../res/options";
 import OptionsContainer from "./inner/OptionsContainer";
@@ -20,11 +20,10 @@ export default class Sale extends React.Component {
     constructor(props) {
         super(props);
         this.state = {names: []};
-        this.addPosition = this.addPosition.bind(this);
+        this.addPosition = this.addPosition.bind(this)
     }
 
     async addPosition(barcode) {
-        console.log("REVOUT ADDPOSITION");
         const positions = await ReceiptAPI.getPositionsByBarcode(barcode);
         if (positions.length) {
             positions.forEach(
@@ -34,12 +33,13 @@ export default class Sale extends React.Component {
                         if (Sale.positions[i].name === position.name) {
                             Sale.positions[i].quantity++;
                             abortAdd = true;
-                            break;
+                            break
                         }
                     }
                     if (!abortAdd) {
+                        position.uuid = UuidGenerator.v4();
                         position.quantity = 1;
-                        Sale.positions.push(position);
+                        Sale.positions.push(position)
                     }
                 }
             );
@@ -100,7 +100,7 @@ export default class Sale extends React.Component {
 
     componentWillUnmount() {
         Scanner.removeEventListener(ScannerEventType.BARCODE_RECEIVED, this.addPosition);
-        Sale.positions = [];
+        Sale.positions = []
     }
 
 }

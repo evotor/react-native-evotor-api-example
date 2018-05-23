@@ -68,7 +68,8 @@ export const receiptOptions = {
             "Сгенерировать позицию",
             async () => {
                 const products = await new ProductQuery()
-                    .type.equal(ProductType.ALCOHOL_MARKED)
+                    .name.like("%пиво%")
+                    .or().type.equal(ProductType.ALCOHOL_MARKED)
                     .union(new ProductQuery()
                         .name.like("%водка%")
                         .intersection(new ProductQuery()
@@ -258,6 +259,7 @@ addRestBroadcastListeners();
 export const restBroadcastOptions = {
     title: "Остальные\n\nсобытия",
     options: [
+        option("Получено push-уведомление", () => AsyncStorage.getItem("pushNotification")),
         option("Открыта информация о товаре", () => AsyncStorage.getItem("evotor.intent.action.inventory.CARD_OPEN")),
         option("Открыт денежный ящик", () => AsyncStorage.getItem("evotor.intent.action.cashDrawer.OPEN")),
         option("Деньги внесены", () => AsyncStorage.getItem("evotor.intent.action.cashOperation.IN")),
@@ -265,6 +267,7 @@ export const restBroadcastOptions = {
         option(
             "Очистить список событий",
             async () => {
+                await AsyncStorage.removeItem("pushNotification");
                 await AsyncStorage.removeItem("evotor.intent.action.inventory.CARD_OPEN");
                 await AsyncStorage.removeItem("evotor.intent.action.cashDrawer.OPEN");
                 await AsyncStorage.removeItem("evotor.intent.action.cashOperation.IN");

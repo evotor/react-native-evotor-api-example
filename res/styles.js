@@ -1,4 +1,3 @@
-import React from 'react';
 import {StyleSheet, Dimensions} from 'react-native';
 
 const fullWidth = Dimensions.get('window').width;
