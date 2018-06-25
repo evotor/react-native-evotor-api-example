@@ -20,44 +20,39 @@ export default class Home extends React.Component {
         header: null
     };
 
-    render() {
-        return (
-            <View style={[styles.container, styles.deepGrey]}>
-                {this._renderTitle()}
-            </View>
-        )
-    }
+    render = () =>
+        <View style={[styles.container, styles.deepGrey]}>
+            {this._renderTitle()}
+        </View>;
 
-    _renderTitle() {
-        return [
-            <View key={0} style={styles.bottomPadding}>
-                <SaleButton onPress={() => this.props.navigation.navigate('Sale')}/>
-            </View>,
-            this._renderTitleRow(
-                [
-                    {color: 'orange', data: inventoryOptions},
-                    {color: 'blue', data: userOptions},
-                    {color: 'blue', data: navigationOptions}
-                ],
-                1
-            ),
-            this._renderTitleRow(
-                [
-                    {color: 'orange', data: deviceOptions},
-                    {color: 'blue', data: sessionOptions},
-                    {color: 'grey', data: receiptBroadcastOptions},
-                ],
-                2
-            ),
-            this._renderTitleRow(
-                [
-                    {color: 'grey', data: receiptPositionBroadcastOptions},
-                    {color: 'grey', data: restBroadcastOptions}
-                ],
-                3
-            )
-        ]
-    }
+    _renderTitle = () => [
+        <View key={0} style={styles.bottomPadding}>
+            <SaleButton onPress={() => this.props.navigation.navigate('Sale')}/>
+        </View>,
+        this._renderTitleRow(
+            [
+                {color: 'orange', data: inventoryOptions},
+                {color: 'blue', data: userOptions},
+                {color: 'blue', data: navigationOptions}
+            ],
+            1
+        ),
+        this._renderTitleRow(
+            [
+                {color: 'orange', data: deviceOptions},
+                {color: 'blue', data: sessionOptions},
+                {color: 'grey', data: receiptBroadcastOptions},
+            ],
+            2
+        ),
+        this._renderTitleRow(
+            [
+                {color: 'grey', data: receiptPositionBroadcastOptions},
+                {color: 'grey', data: restBroadcastOptions}
+            ],
+            3
+        )
+    ];
 
     _renderTitleRow(items, count) {
         const row = [];

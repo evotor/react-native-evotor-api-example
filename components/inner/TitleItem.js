@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 import styles from '../../res/styles';
 
-const TitleItem = ({padding, color, onPress, text}) => (
+const TitleItem = ({padding, color, onPress, text}) =>
     <View style={padding}>
         <TouchableOpacity style={styles[color]} onPress={onPress}>
             <View style={[styles.titleItem, styles.center]}>
@@ -13,7 +13,6 @@ const TitleItem = ({padding, color, onPress, text}) => (
                 </View>
             </View>
         </TouchableOpacity>
-    </View>
-);
+    </View>;
 
 export default TitleItem

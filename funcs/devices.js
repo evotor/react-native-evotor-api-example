@@ -2,7 +2,6 @@ import {AsyncStorage} from 'react-native';
 import {DeviceConnectionEventType, DeviceServiceConnector, Scanner, ScannerEventType} from 'evotor-integration-library';
 
 const listener = (device) => async (value) => {
-    console.log("REVOUT LISTENER DEVICE " + device + " VALUE: " + value);
     let abort = false;
     await AsyncStorage
         .setItem(device, value.toString())

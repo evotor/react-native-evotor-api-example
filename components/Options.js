@@ -15,13 +15,10 @@ export default class Options extends React.Component {
         }
     };
 
-    render() {
-        return (
-            <View style={[styles.container, styles.deepGrey]}>
-                {this._renderContent()}
-            </View>
-        )
-    }
+    render = () =>
+        <View style={[styles.container, styles.deepGrey]}>
+            {this._renderContent()}
+        </View>;
 
     _renderContent() {
         const {state, navigate} = this.props.navigation;

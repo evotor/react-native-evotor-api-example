@@ -59,23 +59,18 @@ export default class Sale extends React.Component {
         this.setState({names})
     }
 
-    componentDidMount() {
-        Scanner.addEventListener(ScannerEventType.BARCODE_RECEIVED, this.addPosition)
-    }
+    componentDidMount = () => Scanner.addEventListener(ScannerEventType.BARCODE_RECEIVED, this.addPosition);
 
-    render() {
-        return (
-            <View style={[styles.container, styles.deepGrey]}>
-                <View style={styles.container}>
-                    {this._renderPositions()}
-                </View>
-                <RowItem
-                    buttonColor='green'
-                    onPress={() => this.props.navigation.navigate('Options', receiptOptions)}
-                    text="Чек"/>
+    render = () =>
+        <View style={[styles.container, styles.deepGrey]}>
+            <View style={styles.container}>
+                {this._renderPositions()}
             </View>
-        )
-    }
+            <RowItem
+                buttonColor='green'
+                onPress={() => this.props.navigation.navigate('Options', receiptOptions)}
+                text="Чек"/>
+        </View>;
 
     _renderPositions() {
         const options = [];

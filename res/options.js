@@ -2,6 +2,8 @@ import {AsyncStorage} from "react-native";
 import {
     BarcodeType,
     DeviceServiceConnector,
+    GrantSortOrder,
+    GrantQuery,
     InventoryAPI,
     NavigationAPI,
     PositionBuilder,
@@ -10,6 +12,7 @@ import {
     PrintableText,
     Printer,
     ProductType,
+    ProductSortOrder,
     ProductQuery,
     ReceiptAPI,
     ReceiptType,
@@ -17,6 +20,8 @@ import {
     SessionAPI,
     SetExtra,
     UserAPI,
+    UserSortOrder,
+    UserQuery,
 } from 'evotor-integration-library';
 import {getRegisterReceiptData} from "../funcs/receipt"
 import {
@@ -67,24 +72,10 @@ export const receiptOptions = {
         option(
             "Сгенерировать позицию",
             async () => {
-                const products = await new ProductQuery()
-                    .name.like("%пиво%")
-                    .or().type.equal(ProductType.ALCOHOL_MARKED)
-                    .union(new ProductQuery()
-                        .name.like("%водка%")
-                        .intersection(new ProductQuery()
-                            .alcoholByVolume.greater(40, true)
-                            .union(new ProductQuery()
-                                .name.like("%одеколон%")
-                                .or().name.like("%настойка боярышника 40/%%", '/')))
-                        .intersection(new ProductQuery()
-                            .price.lower(100)
-                            .and().alcoholByVolume.lower(40)))
-                    .limit(1)
-                    .execute();
-                if(products.length) {
+                const product = await InventoryAPI.getProductByUuid("cbe3216e-5418-4525-b474-60e5d7a68823");
+                if (product) {
                     return PositionBuilder
-                        .newInstance(products[0], 2)
+                        .newInstance(product, 2)
                         .setMeasureName("бутылка")
                         .setUuid("cbe3216e-5418-4525-b474-60e5d7a68823")
                         .build();
@@ -107,6 +98,29 @@ export const receiptOptions = {
 export const inventoryOptions = {
     title: "Товароучёт",
     options: [
+        option(
+            "Запрос на получение товаров",
+            () => new ProductQuery()
+                .name.like("%пиво%")
+                .or().type.equal(ProductType.ALCOHOL_MARKED)
+                .union(new ProductQuery()
+                    .name.like("%водка%")
+                    .intersection(new ProductQuery()
+                        .alcoholByVolume.greater(40, true)
+                        .union(new ProductQuery()
+                            .name.like("%одеколон%")
+                            .or().name.like("%настойка боярышника 40/%%", '/')))
+                    .intersection(new ProductQuery()
+                        .price.lower(100)
+                        .and().alcoholByVolume.lower(40)))
+                .sortOrder(new ProductSortOrder()
+                    .alcoholByVolume.asc()
+                    .quantity.asc()
+                    .tareVolume.asc()
+                    .price.desc())
+                .limit(2)
+                .execute()
+        ),
         option("Все штрихкоды товара", () => InventoryAPI.getAllBarcodesForProduct("cbe3216e-5418-4525-b474-60e5d7a68823")),
         option("Товар по идентификатору", () => InventoryAPI.getProductByUuid("cbe3216e-5418-4525-b474-60e5d7a68823")),
         option("Возможные дополнительные поля товара", () => InventoryAPI.getField("orgUuid")),
@@ -117,6 +131,22 @@ export const inventoryOptions = {
 export const userOptions = {
     title: "Пользователи",
     options: [
+        option(
+            "Запрос на получение пользователей",
+            () => new UserQuery()
+                .pin.notEqual(null)
+                .and().firstName.like("%Вася%")
+                .sortOrder(new UserSortOrder()
+                    .roleTitle.asc()
+                    .inn.desc())
+                .execute()
+        ),
+        option(
+            "Запрос на получение прав пользователей",
+            () => new GrantQuery(true)
+                .title.like("%REPORT%")
+                .execute()
+        ),
         option("Данные всех пользователей", UserAPI.getAllUsers),
         option("Данные авторизованного пользователя", UserAPI.getAuthenticatedUser),
         option("Список всех доступных прав", UserAPI.getAllGrants),
@@ -140,7 +170,7 @@ export const navigationOptions = {
             "React window",
             (navigate) => {
                 addActivityResultListener(navigate);
-                return NavigationAPI.startActivityForResult(createIntentForReactWindow())
+                return NavigationAPI.startActivityForResult(createIntentForReactWindow(), 1)
             }
         ),
         option(
@@ -166,7 +196,7 @@ export const deviceOptions = {
     options: [
         option(
             "Подключить принтер и весы",
-            async () => DeviceServiceConnector.startInitConnections(),
+            DeviceServiceConnector.startInitConnections,
             "Устройства подключены"
         ),
         option("Проверить подключенность принтера", () => AsyncStorage.getItem("printer")),
