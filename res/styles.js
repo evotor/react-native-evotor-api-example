@@ -31,6 +31,9 @@ const styles = StyleSheet.create({
         width: fullWidth,
         height: fullHeight / 15
     },
+    padding: {
+        padding: 5
+    },
     leftPadding: {
         paddingLeft: 2.5
     },
@@ -42,9 +45,6 @@ const styles = StyleSheet.create({
     },
     bottomPadding: {
         paddingBottom: 2.5
-    },
-    responsePadding: {
-        padding: 2
     },
     green: {
         backgroundColor: '#67A420'

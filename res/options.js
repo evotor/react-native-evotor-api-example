@@ -58,8 +58,16 @@ const option = (title, onSelect, customResult) => {
             if (!abort) {
                 if (customResult) {
                     navigate(customResult);
-                } else if (typeof result !== 'undefined') {
-                    navigate(JSON.stringify(result));
+                } else {
+                    switch (typeof result) {
+                        case 'undefined':
+                            break;
+                        case 'string':
+                            navigate(result);
+                            break;
+                        default:
+                            navigate(JSON.stringify(result))
+                    }
                 }
             }
         }
@@ -89,9 +97,25 @@ export const receiptOptions = {
         option("Открыть чек возврата покупки", () => ReceiptAPI.openBuybackReceipt()),
         option("Отправить электронный чек продажи", () => ReceiptAPI.registerSellReceipt(...getRegisterReceiptData())),
         option("Отправить электронный чек возврата", () => ReceiptAPI.registerPaybackReceipt(...getRegisterReceiptData())),
-        option("Чек по типу", () => ReceiptAPI.getReceiptByType(ReceiptType.SELL)),
-        option("Чек по идентификатору", () => ReceiptAPI.getReceiptByUuid("cbe3216e-5418-4525-b474-60e5d7a68823")),
-        option("Список заголовков чека", () => ReceiptAPI.getReceiptHeaders(ReceiptType.SELL))
+        option("Получить чек по типу", () => ReceiptAPI.getReceiptByType(ReceiptType.SELL)),
+        option("Получить чек по идентификатору", () => ReceiptAPI.getReceiptByUuid("a39884f4-cfbc-4ed3-95d1-f15ec66ab8ee")),
+        option("Получить список заголовков чека", () => ReceiptAPI.getReceiptHeaders(ReceiptType.SELL)),
+        option(
+            "Получить данные текущего чека",
+            async () => {
+                const receipt = await ReceiptAPI.getReceiptByType(ReceiptType.SELL);
+                let result = null;
+                if(receipt) {
+                    result = "Позиции: " + JSON.stringify(receipt.getPositions()) +
+                        "\n\nПлатежи: " + JSON.stringify(receipt.getPayments()) +
+                        "\n\nСкидка чека: " + receipt.getDiscount();
+                    if (receipt.printDocuments.length) {
+                        result += "\n\nСкидка первой группы: " + receipt.printDocuments[0].getDiscount()
+                    }
+                }
+                return result
+            }
+        )
     ]
 };
 
