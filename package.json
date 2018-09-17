@@ -19,7 +19,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
-    "evotor-integration-library": "^3.5.5",
+    "evotor-integration-library": "^3.6.0",
     "react": "16.0.0-beta.5",
     "react-native": "^0.49.5",
     "react-navigation": "^1.5.11"

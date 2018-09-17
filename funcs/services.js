@@ -19,13 +19,16 @@ import {
     PrintableBarcode,
     PrintableImage,
     BarcodeType,
-    PrintExtraPlacePositionAllSubpositionsFooter
+    PrintExtraPlacePositionAllSubpositionsFooter,
+    PaymentSystemPaymentOkResult,
+    PaymentDelegatorSelectedEventResult,
+    ReceiptAPI
 } from 'evotor-integration-library';
 import {AsyncStorage} from "react-native";
 
 const errorHandler = (event) => (error) => console.log("Error handling event " + event + ": " + error.message);
 
-const processIntegration = async (event, callback, getResult) => {
+const processRecallableIntegration = async (event, callback, getResult) => {
     const processCount = parseInt(await AsyncStorage.getItem(event));
     if (processCount > 2) {
         callback
@@ -41,9 +44,9 @@ const processIntegration = async (event, callback, getResult) => {
     }
 };
 
-const beforePositionsEditedListener = (changes, callback) => {
-    processIntegration(
-        "BEFORE_POSITIONS_EDITED",
+const beforePositionsEditedListener = (changes, callback) =>
+    processRecallableIntegration(
+        IntegrationServiceEventType.BEFORE_POSITIONS_EDITED,
         callback,
         () => {
             if (changes.length) {
@@ -54,110 +57,117 @@ const beforePositionsEditedListener = (changes, callback) => {
             return new BeforePositionsEditedEventResult(changes, new SetExtra({positions: "edited"}));
         }
     );
-};
 
-const receiptDiscountListener = (discount, receiptUuid, callback) => {
+const receiptDiscountListener = (discount, receiptUuid, callback) =>
     callback
         .startActivity(
             new Intent()
                 .setPackageName("com.reactintegrationapp")
-                .setClassName("MainActivity")
-                .putExtras({
-                    discount: discount,
-                    receiptUuid: receiptUuid
-                }))
-        .catch(errorHandler("RECEIPT_DISCOUNT"));
-};
+                .putExtra("event", IntegrationServiceEventType.RECEIPT_DISCOUNT))
+        .catch(errorHandler(IntegrationServiceEventType.RECEIPT_DISCOUNT));
 
-const paymentSelectedListener = (paymentSystem, callback) => {
-    processIntegration(
-        "PAYMENT_SELECTED",
-        callback,
-        () => new PaymentSelectedEventResult(
-            new SetExtra({payment: "selected"}),
-            [
-                new PaymentPurpose("-1-", paymentSystem.paymentSystemId, 3, "0", "платёж клиента 1"),
-                new PaymentPurpose("-2-", paymentSystem.paymentSystemId, 5, "0", null),
-                new PaymentPurpose("-3-", paymentSystem.paymentSystemId, 2, null, "платёж клиента 3"),
-                new PaymentPurpose("-4-", null, 3, "0", "платёж клиента 4"),
-                new PaymentPurpose(null, paymentSystem.paymentSystemId, 5, "0", "платёж клиента 5"),
-                new PaymentPurpose("-6-", paymentSystem.paymentSystemId, 2, "0", "платёж клиента 6"),
-                new PaymentPurpose(null, null, 25, null, null),
-            ]
-        )
-    );
-};
+const paymentSystemListener = (operationType, event, callback) =>
+    callback
+        .onResult(new PaymentSystemPaymentOkResult("123", ["Привет мир"], null))
+        .catch(errorHandler(IntegrationServiceEventType.PAYMENT_SYSTEM));
 
-const printGroupRequiredListener = (paymentSystem, callback) => {
-    processIntegration(
-        "PRINT_GROUP_REQUIRED",
-        callback,
-        () => new PrintGroupRequiredEventResult(
-            new SetExtra({printGroup: "required"}),
-            [
-                new SetPrintGroup(
-                    new PrintGroup(
-                        "a1a90455-1630-4b74-8458-530b835ae813",
-                        PrintGroupType.INVOICE,
-                        "OOO \"Мои мечты\"",
-                        "012345678901",
-                        "Ул. Пушкина, д. Колотушкина",
-                        TaxationSystem.PATENT,
-                        true
-                    ),
-                    ["-1-", "-3-"],
-                    []
-                ),
-                new SetPrintGroup(
-                    new PrintGroup(
-                        "43ac17f8-5a3e-444a-be4f-da6e5afcf83",
-                        PrintGroupType.INVOICE,
-                        "ЗАО \"Пустота небытия\"",
-                        "012345678902",
-                        "Ул. Есенина, д. Каруселина",
-                        TaxationSystem.PATENT,
-                        true
-                    ),
-                    ["-4-", "-6-"],
-                    []
+const paymentDelegatorListener = async (receiptUuid, callback) =>
+    callback
+        .onResult(
+            new PaymentDelegatorSelectedEventResult(
+                new PaymentPurpose(
+                    "123",
+                    "com.revotor",
+                    (await ReceiptAPI.getAllPaymentPerformers()).filter(item => item.appUuid === "6daf41fa-2aa5-4be9-8ee9-486f111eea6e")[0],
+                    10,
+                    null,
+                    "Иди нахуй, мир"
                 )
-            ]
+            ))
+        .catch(errorHandler(IntegrationServiceEventType.PAYMENT_DELEGATOR));
+
+const paymentSelectedListener = (paymentPurpose, callback) => {
+    const paymentParts = [paymentPurpose, paymentPurpose];
+    paymentParts[0].total = paymentPurpose.total / 4;
+    paymentParts[1].total = paymentPurpose.total - paymentParts[0].total;
+    callback
+        .onResult(
+            new PaymentSelectedEventResult(
+                new SetExtra({payment: "selected"}),
+                paymentParts
+            )
         )
-    );
+        .catch(errorHandler(IntegrationServiceEventType.PAYMENT_SELECTED));
 };
 
-const printExtraRequiredListener = (callback) => {
-    processIntegration(
-        "PRINT_EXTRA_REQUIRED",
-        callback,
-        () => new PrintExtraRequiredEventResult([
-            new SetPrintExtra(
-                new PrintExtraPlacePrintGroupTop("43ac17f8-5a3e-444a-be4f-da6e5afcf83"),
+const printGroupRequiredListener = (paymentSystem, callback) =>
+    callback
+        .onResult(
+            new PrintGroupRequiredEventResult(
+                new SetExtra({printGroup: "required"}),
                 [
-                    new PrintableText("PrintExtraPlacePrintGroupTop"),
-                    new PrintableBarcode("ABC-1234", BarcodeType.CODE39)
-                ]
-            ),
-            new SetPrintExtra(
-                new PrintExtraPlacePositionAllSubpositionsFooter(),
-                [
-                    new PrintableText("PrintExtraPlacePositionAllSubpositionsFooter"),
-                    new PrintableImage('android.resource://com.revotor/drawable/ic_launcher')
+                    new SetPrintGroup(
+                        new PrintGroup(
+                            "a1a90455-1630-4b74-8458-530b835ae813",
+                            PrintGroupType.INVOICE,
+                            "OOO \"Мои мечты\"",
+                            "012345678901",
+                            "Ул. Пушкина, д. Колотушкина",
+                            TaxationSystem.PATENT,
+                            true
+                        ),
+                        ["-1-", "-3-"],
+                        []
+                    ),
+                    new SetPrintGroup(
+                        new PrintGroup(
+                            "43ac17f8-5a3e-444a-be4f-da6e5afcf83",
+                            PrintGroupType.INVOICE,
+                            "ЗАО \"Пустота небытия\"",
+                            "012345678902",
+                            "Ул. Есенина, д. Каруселина",
+                            TaxationSystem.PATENT,
+                            true
+                        ),
+                        ["-4-", "-6-"],
+                        []
+                    )
                 ]
             )
-        ])
-    );
-};
+        )
+        .catch(errorHandler(IntegrationServiceEventType.PRINT_GROUP_REQUIRED));
+
+const printExtraRequiredListener = (callback) =>
+    callback
+        .onResult(
+            new PrintExtraRequiredEventResult([
+                new SetPrintExtra(
+                    new PrintExtraPlacePrintGroupTop("43ac17f8-5a3e-444a-be4f-da6e5afcf83"),
+                    [
+                        new PrintableText("PrintExtraPlacePrintGroupTop"),
+                        new PrintableBarcode("ABC-1234", BarcodeType.CODE39)
+                    ]
+                ),
+                new SetPrintExtra(
+                    new PrintExtraPlacePositionAllSubpositionsFooter(),
+                    [
+                        new PrintableText("PrintExtraPlacePositionAllSubpositionsFooter"),
+                        new PrintableImage('android.resource://com.revotor/drawable/ic_launcher')
+                    ]
+                )
+            ])
+        )
+        .catch(errorHandler(IntegrationServiceEventType.PRINT_EXTRA_REQUIRED));
 
 export const addIntegrationServiceListeners = () => {
-    AsyncStorage.setItem("BEFORE_POSITIONS_EDITED", "0").catch(errorHandler("BEFORE_POSITIONS_EDITED"));
-    AsyncStorage.setItem("RECEIPT_DISCOUNT", "0").catch(errorHandler("RECEIPT_DISCOUNT"));
-    AsyncStorage.setItem("PAYMENT_SELECTED", "0").catch(errorHandler("PAYMENT_SELECTED"));
-    AsyncStorage.setItem("PRINT_GROUP_REQUIRED", "0").catch(errorHandler("PRINT_GROUP_REQUIRED"));
-    AsyncStorage.setItem("PRINT_EXTRA_REQUIRED", "0").catch(errorHandler("PRINT_EXTRA_REQUIRED"));
+    AsyncStorage
+        .setItem(IntegrationServiceEventType.BEFORE_POSITIONS_EDITED, "0")
+        .catch(errorHandler(IntegrationServiceEventType.BEFORE_POSITIONS_EDITED));
     ServiceAPI.addEventListener(IntegrationServiceEventType.BEFORE_POSITIONS_EDITED, beforePositionsEditedListener);
     ServiceAPI.addEventListener(IntegrationServiceEventType.RECEIPT_DISCOUNT, receiptDiscountListener);
     ServiceAPI.addEventListener(IntegrationServiceEventType.PAYMENT_SELECTED, paymentSelectedListener);
+    ServiceAPI.addEventListener(IntegrationServiceEventType.PAYMENT_SYSTEM, paymentSystemListener);
+    ServiceAPI.addEventListener(IntegrationServiceEventType.PAYMENT_DELEGATOR, paymentDelegatorListener);
     ServiceAPI.addEventListener(IntegrationServiceEventType.PRINT_GROUP_REQUIRED, printGroupRequiredListener);
     ServiceAPI.addEventListener(IntegrationServiceEventType.PRINT_EXTRA_REQUIRED, printExtraRequiredListener);
 };

@@ -18,6 +18,7 @@
     <uses-permission android:name="ru.evotor.devices.SCANNER_RECEIVER"/>
     <uses-permission android:name="ru.evotor.permission.PRINT_Z_REPORT" />
     <uses-permission android:name="ru.evotor.permission.PAYMENT_SYSTEM" />
+    <uses-permission android:name="ru.evotor.permission.COMBINED" />
     <uses-permission android:name="ru.evotor.permission.receipt.printExtra.SET" />
 
     <application
@@ -73,6 +74,33 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <action android:name="evo.v2.receipt.sell.receiptDiscount" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.evotor.services.integration.events.PaymentSystemService"
+            android:enabled="true"
+            android:icon="@android:drawable/ic_dialog_map"
+            android:label="React payment method">
+            <meta-data
+                android:name="ru.evotor.sales_screen.BACKGROUND_COLOR"
+                android:value="@android:color/holo_green_light" />
+            <meta-data
+                android:name="ru.evotor.paymentSystem.PAYMENT_SYSTEM_ID"
+                android:value="com.revotor" />
+            <intent-filter>
+                <action android:name="evo.v2.receipt.paymentSystem" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.evotor.services.integration.events.PaymentDelegatorService"
+            android:enabled="true"
+            android:icon="@android:drawable/ic_dialog_map"
+            android:label="React payment delegator">
+            <meta-data
+                android:name="ru.evotor.sales_screen.BACKGROUND_COLOR"
+                android:value="@android:color/holo_green_light" />
+            <intent-filter>
+                <action android:name="evo.v2.receipt.sell.payment.COMBINED" />
             </intent-filter>
         </service>
         <service

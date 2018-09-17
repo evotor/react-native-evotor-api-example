@@ -24,7 +24,7 @@ export const addCustomServiceEventListener = (n) => {
 
 const createIntent = () => new Intent().putExtras({key1: "hello", key2: ["world", true, {key3: 123.456}]});
 
-export const createIntentForReactWindow = () => createIntent().setPackageName('com.reactintegrationapp');
+export const createIntentForReactWindow = () => createIntent().setPackageName('com.reactintegrationapp').setClassName("MainActivity");
 
 export const createIntentForNativeWindow = () => createIntent().setClassName('com.revotor.NativeActivity');
 
