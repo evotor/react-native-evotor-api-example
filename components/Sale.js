@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, ToastAndroid} from 'react-native';
-import {ReceiptAPI, Scanner, ScannerEventType, UuidGenerator} from 'evotor-integration-library';
+import {ReceiptAPI, Scanner, ScannerEventType, UuidGenerator, AgentRequisites} from 'evotor-integration-library';
 import styles from '../res/styles';
 import {receiptOptions} from "../res/options";
 import OptionsContainer from "./inner/OptionsContainer";
@@ -28,6 +28,17 @@ export default class Sale extends React.Component {
         if (positions.length) {
             positions.forEach(
                 (position) => {
+                    position.agentRequisites = AgentRequisites.createForBankPaymentSubagent(
+                        ["89151243459", "89268475901"],
+                        ["88005553535"],
+                        "123",
+                        ["84955195517", "84956297549"],
+                        "Банк хоум кредит",
+                        "321",
+                        ["89852849385"],
+                        "ул. Есенина, дом Каруселина",
+                        "Продал Васе шаурму"
+                    );
                     let abortAdd = false;
                     for (let i = 0; i < Sale.positions.length; i++) {
                         if (Sale.positions[i].name === position.name) {
@@ -39,7 +50,7 @@ export default class Sale extends React.Component {
                     if (!abortAdd) {
                         position.uuid = UuidGenerator.v4();
                         position.quantity = 1;
-                        Sale.positions.push(position)
+                        Sale.positions = Sale.positions.concat(position)
                     }
                 }
             );

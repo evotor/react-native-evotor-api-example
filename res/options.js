@@ -22,6 +22,7 @@ import {
     UserAPI,
     UserSortOrder,
     UserQuery,
+    KktAPI
 } from 'evotor-integration-library';
 import {getRegisterReceiptData} from "../funcs/receipt"
 import {
@@ -256,6 +257,15 @@ export const sessionOptions = {
         option("Номер последней смены", SessionAPI.getLastSessionNumber),
         option("Проверка открытия смены", SessionAPI.isSessionOpened),
         option("Напечатать Z-отчет", SessionAPI.printZReport, "Смена закрыта")
+    ]
+};
+
+export const kktOptions = {
+    title: "Касса",
+    options: [
+        option("Поддерживаемая версия ФФД", KktAPI.getSupportedFfdVersion),
+        option("Зарегистрированные типы агентов", KktAPI.getRegisteredAgentTypes),
+        option("Зарегистрированные типы субагентов", KktAPI.getRegisteredSubagentTypes),
     ]
 };
 

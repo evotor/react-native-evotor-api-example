@@ -12,6 +12,7 @@ import {
     restBroadcastOptions,
     sessionOptions,
     userOptions,
+    kktOptions
 } from '../res/options';
 
 export default class Home extends React.Component {
@@ -41,12 +42,13 @@ export default class Home extends React.Component {
             [
                 {color: 'orange', data: deviceOptions},
                 {color: 'blue', data: sessionOptions},
-                {color: 'grey', data: receiptBroadcastOptions},
+                {color: 'blue', data: kktOptions},
             ],
             2
         ),
         this._renderTitleRow(
             [
+                {color: 'grey', data: receiptBroadcastOptions},
                 {color: 'grey', data: receiptPositionBroadcastOptions},
                 {color: 'grey', data: restBroadcastOptions}
             ],
