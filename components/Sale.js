@@ -28,6 +28,7 @@ export default class Sale extends React.Component {
         if (positions.length) {
             positions.forEach(
                 (position) => {
+                    /* UNCOMMENT TO TEST AGENT REQUISITES
                     position.agentRequisites = AgentRequisites.createForBankPaymentSubagent(
                         ["89151243459", "89268475901"],
                         ["88005553535"],
@@ -38,7 +39,7 @@ export default class Sale extends React.Component {
                         ["89852849385"],
                         "ул. Есенина, дом Каруселина",
                         "Продал Васе шаурму"
-                    );
+                    );*/
                     let abortAdd = false;
                     for (let i = 0; i < Sale.positions.length; i++) {
                         if (Sale.positions[i].name === position.name) {

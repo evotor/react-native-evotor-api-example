@@ -35,12 +35,19 @@ const processRecallableIntegration = async (event, callback, getResult) => {
             .skip()
             .catch(errorHandler(event));
     } else {
-        await callback
-            .onResult(getResult())
-            .catch(errorHandler(event));
-        AsyncStorage
-            .setItem(event, (processCount + 1).toString())
-            .catch(errorHandler(event));
+        const result = getResult();
+        if (result) {
+            await callback
+                .onResult(getResult())
+                .catch(errorHandler(event));
+            AsyncStorage
+                .setItem(event, (processCount + 1).toString())
+                .catch(errorHandler(event));
+        } else {
+            callback
+                .skip()
+                .catch(errorHandler(event));
+        }
     }
 };
 
@@ -51,10 +58,10 @@ const beforePositionsEditedListener = (changes, callback) =>
         () => {
             if (changes.length) {
                 const positionToEdit = changes[0].position;
+                console.log("REVOTOR EBAL VAS V ROT " + JSON.stringify(changes[0]));
                 positionToEdit.quantity++;
-                changes.push(new PositionEdit(positionToEdit));
+                return new BeforePositionsEditedEventResult([new PositionEdit(positionToEdit)], new SetExtra({positions: "edited"}));
             }
-            return new BeforePositionsEditedEventResult(changes, new SetExtra({positions: "edited"}));
         }
     );
 
