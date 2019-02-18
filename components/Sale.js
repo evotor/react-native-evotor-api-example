@@ -5,6 +5,8 @@ import styles from '../res/styles';
 import {receiptOptions} from "../res/options";
 import OptionsContainer from "./inner/OptionsContainer";
 import RowItem from "./inner/RowItem";
+import {SettlementMethod} from "evotor-integration-library/js/DataWrappers/receipt/framework";
+import {SettlementMethodType} from "evotor-integration-library/js/Types/compilable";
 
 export default class Sale extends React.Component {
 
@@ -40,6 +42,7 @@ export default class Sale extends React.Component {
                         "ул. Есенина, дом Каруселина",
                         "Продал Васе шаурму"
                     );*/
+                    position.settlementMethod = new SettlementMethod(SettlementMethodType.PARTIAL_SETTLEMENT, 1);
                     let abortAdd = false;
                     for (let i = 0; i < Sale.positions.length; i++) {
                         if (Sale.positions[i].name === position.name) {

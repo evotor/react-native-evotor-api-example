@@ -106,7 +106,7 @@ export const receiptOptions = {
             async () => {
                 const receipt = await ReceiptAPI.getReceiptByType(ReceiptType.SELL);
                 let result = null;
-                if(receipt) {
+                if (receipt) {
                     result = "Позиции: " + JSON.stringify(receipt.getPositions()) +
                         "\n\nПлатежи: " + JSON.stringify(receipt.getPayments()) +
                         "\n\nСкидка чека: " + receipt.getDiscount();
@@ -159,11 +159,7 @@ export const userOptions = {
         option(
             "Запрос на получение пользователей",
             () => new UserQuery()
-                .pin.notEqual(null)
-                .and().firstName.like("%Вася%")
-                .sortOrder(new UserSortOrder()
-                    .roleTitle.asc()
-                    .inn.desc())
+                .noFilters()
                 .execute()
         ),
         option(
@@ -221,7 +217,7 @@ export const deviceOptions = {
     options: [
         option(
             "Подключить принтер и весы",
-            DeviceServiceConnector.startInitConnections,
+            () => DeviceServiceConnector.startInitConnections(),
             "Устройства подключены"
         ),
         option("Проверить подключенность принтера", () => AsyncStorage.getItem("printer")),
@@ -266,6 +262,7 @@ export const kktOptions = {
         option("Поддерживаемая версия ФФД", KktAPI.getSupportedFfdVersion),
         option("Зарегистрированные типы агентов", KktAPI.getRegisteredAgentTypes),
         option("Зарегистрированные типы субагентов", KktAPI.getRegisteredSubagentTypes),
+        option("Доступна ли ставка НДС 20%", KktAPI.isVatRate20Available),
     ]
 };
 
