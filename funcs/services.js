@@ -58,7 +58,7 @@ const beforePositionsEditedListener = (changes, callback) =>
         () => {
             if (changes.length) {
                 const positionToEdit = changes[0].position;
-                console.log("REVOTOR EBAL VAS V ROT " + JSON.stringify(changes[0]));
+                console.log("Changes: " + JSON.stringify(changes[0]));
                 positionToEdit.quantity++;
                 return new BeforePositionsEditedEventResult([new PositionEdit(positionToEdit)], new SetExtra({positions: "edited"}));
             }
@@ -88,7 +88,7 @@ const paymentDelegatorListener = async (receiptUuid, callback) =>
                     (await ReceiptAPI.getAllPaymentPerformers()).filter(item => item.appUuid === "6daf41fa-2aa5-4be9-8ee9-486f111eea6e")[0],
                     10,
                     null,
-                    "Иди нахуй, мир"
+                    "Пока, мир"
                 )
             ))
         .catch(errorHandler(IntegrationServiceEventType.PAYMENT_DELEGATOR));

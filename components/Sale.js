@@ -32,15 +32,15 @@ export default class Sale extends React.Component {
                 (position) => {
                     /* UNCOMMENT TO TEST AGENT REQUISITES
                     position.agentRequisites = AgentRequisites.createForBankPaymentSubagent(
-                        ["89151243459", "89268475901"],
-                        ["88005553535"],
+                        ["89000000000", "89000000001"],
+                        ["88000000000"],
                         "123",
-                        ["84955195517", "84956297549"],
-                        "Банк хоум кредит",
+                        ["84000000000", "84000000001"],
+                        "Мой Банк",
                         "321",
-                        ["89852849385"],
+                        ["89000000002"],
                         "ул. Есенина, дом Каруселина",
-                        "Продал Васе шаурму"
+                        "Выдача кредита"
                     );*/
                     position.settlementMethod = new SettlementMethod(SettlementMethodType.PARTIAL_SETTLEMENT, 1);
                     let abortAdd = false;
